@@ -1,0 +1,152 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ezroute.site color palette */
+  --jet-black: #30343f;
+  --space-indigo: #1e2749;
+  --twilight-indigo: #273469;
+  --periwinkle: #e4d9ff;
+  --ghost-white: #fafaff;
+  
+  /* Mapped theme tokens */
+  --font-size: 16px;
+  --background: var(--jet-black);
+  --foreground: var(--ghost-white);
+  --card: var(--twilight-indigo);
+  --card-foreground: var(--ghost-white);
+  --popover: var(--twilight-indigo);
+  --popover-foreground: var(--ghost-white);
+  --primary: var(--periwinkle);
+  --primary-foreground: var(--jet-black);
+  --secondary: var(--space-indigo);
+  --secondary-foreground: var(--ghost-white);
+  --muted: var(--space-indigo);
+  --muted-foreground: rgba(250, 250, 255, 0.6);
+  --accent: var(--periwinkle);
+  --accent-foreground: var(--jet-black);
+  --destructive: #ff6b6b;
+  --destructive-foreground: var(--ghost-white);
+  --border: rgba(228, 217, 255, 0.1);
+  --input: rgba(228, 217, 255, 0.1);
+  --input-background: var(--space-indigo);
+  --switch-background: var(--space-indigo);
+  --font-weight-medium: 700;
+  --font-weight-normal: 400;
+  --ring: var(--periwinkle);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.75rem;
+  --sidebar: var(--jet-black);
+  --sidebar-foreground: var(--ghost-white);
+  --sidebar-primary: var(--periwinkle);
+  --sidebar-primary-foreground: var(--jet-black);
+  --sidebar-accent: var(--twilight-indigo);
+  --sidebar-accent-foreground: var(--ghost-white);
+  --sidebar-border: rgba(228, 217, 255, 0.1);
+  --sidebar-ring: var(--periwinkle);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Custom ezroute colors */
+  --color-jet-black: var(--jet-black);
+  --color-space-indigo: var(--space-indigo);
+  --color-twilight-indigo: var(--twilight-indigo);
+  --color-periwinkle: var(--periwinkle);
+  --color-ghost-white: var(--ghost-white);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /**
+  * Default typography styles for HTML elements.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input, textarea {
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
