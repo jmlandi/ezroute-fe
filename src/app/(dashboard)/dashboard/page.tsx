@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 
 import { Plus, TrendingUp, Users, Link as LinkIcon } from 'lucide-react';
@@ -9,17 +11,17 @@ export default function Dashboard() {
     { label: 'Members', value: '8', icon: Users },
     { label: 'Links', value: '24', icon: LinkIcon },
   ];
-  
+
   const recentLinks = [
     { short: 'ezrt.io/promo', destination: 'https://example.com/spring-sale', clicks: 156 },
     { short: 'ezrt.io/docs', destination: 'https://docs.example.com', clicks: 89 },
     { short: 'ezrt.io/app', destination: 'https://app.example.com', clicks: 234 },
   ];
-  
+
   return (
     <div className="px-6 py-8 space-y-8">
       {/* Header */}
-      <motion.div 
+      <motion.div
         className="space-y-2"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -28,9 +30,9 @@ export default function Dashboard() {
         <h1 className="text-2xl">Dashboard</h1>
         <p className="text-sm text-[rgba(250,250,255,0.6)]">Welcome back, @johndoe</p>
       </motion.div>
-      
+
       {/* Workspace Switcher */}
-      <motion.div 
+      <motion.div
         className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)]"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -44,11 +46,11 @@ export default function Dashboard() {
           <option>Team Alpha</option>
         </select>
       </motion.div>
-      
+
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {stats.map(({ label, value, icon: Icon }, index) => (
-          <motion.div 
+          <motion.div
             key={label}
             className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] text-center space-y-2"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -61,22 +63,22 @@ export default function Dashboard() {
           </motion.div>
         ))}
       </div>
-      
+
       {/* Recent Links */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg">Recent Links</h2>
-          <Link 
-            href="/links" 
+          <Link
+            href="/links"
             className="text-sm text-[#e4d9ff] hover:underline"
           >
             View all
           </Link>
         </div>
-        
+
         <div className="space-y-3">
           {recentLinks.map((link, index) => (
-            <motion.div 
+            <motion.div
               key={link.short}
               className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] space-y-2"
               initial={{ opacity: 0, x: -10 }}
@@ -98,7 +100,7 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-      
+
       {/* Floating CTA */}
       <Link
         href="/links/create"
