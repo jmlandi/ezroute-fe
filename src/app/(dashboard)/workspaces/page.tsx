@@ -35,7 +35,9 @@ export default function Workspaces() {
           <p className="text-sm text-[rgba(250,250,255,0.6)] mt-1">Manage your workspaces</p>
         </div>
         <button className="w-10 h-10 bg-[#e4d9ff] text-[#30343f] rounded-full flex items-center justify-center hover:shadow-[0_0_20px_rgba(228,217,255,0.4)] transition-all">
-          <Plus className="w-5 h-5" />
+          <Link href="/workspaces/create">
+            <Plus className="w-5 h-5" />
+          </Link>
         </button>
       </div>
 
