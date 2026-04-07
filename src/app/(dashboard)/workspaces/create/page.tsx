@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { ArrowLeft, Users, Plus, X } from 'lucide-react';
+import { workspacesApi } from '@/services/api/workspaces';
 
 export default function CreateWorkspace() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function CreateWorkspace() {
   const [workspaceName, setWorkspaceName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [invites, setInvites] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddInvite = (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +26,19 @@ export default function CreateWorkspace() {
     setInvites(invites.filter((email) => email !== emailToRemove));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock workspace creation
-    // e.g. await createWorkspace({ name: workspaceName, invites });
-    router.push('/workspaces');
+    setIsSubmitting(true);
+    try {
+      const ws = await workspacesApi.createWorkspace({ name: workspaceName });
+      for (const email of invites) {
+        await workspacesApi.inviteMember(ws.id.toString(), email, 'Member');
+      }
+      router.push('/workspaces');
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -121,10 +131,11 @@ export default function CreateWorkspace() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] flex items-center justify-center gap-2 mt-4"
+          disabled={isSubmitting}
+          className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] flex items-center justify-center gap-2 mt-4 disabled:opacity-50"
         >
           <Users className="w-4 h-4" />
-          Create Workspace
+          {isSubmitting ? 'Creating...' : 'Create Workspace'}
         </button>
       </form>
     </div>

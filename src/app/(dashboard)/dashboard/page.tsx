@@ -1,22 +1,52 @@
 "use client";
 
 import Link from 'next/link';
-
-import { Plus, TrendingUp, Users, Link as LinkIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus, TrendingUp, Users, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { dashboardApi, DashboardStat, RecentLink } from '@/services/api/dashboard';
+import { workspacesApi, Workspace } from '@/services/api/workspaces';
+
+// Map string icon names to actual Lucide components
+const iconMap: Record<string, any> = {
+  trendingUp: TrendingUp,
+  users: Users,
+  linkIcon: LinkIcon,
+};
 
 export default function Dashboard() {
-  const stats = [
-    { label: 'Workspaces', value: '2', icon: TrendingUp },
-    { label: 'Members', value: '8', icon: Users },
-    { label: 'Links', value: '24', icon: LinkIcon },
-  ];
+  const [stats, setStats] = useState<DashboardStat[]>([]);
+  const [recentLinks, setRecentLinks] = useState<RecentLink[]>([]);
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const recentLinks = [
-    { short: 'ezrt.io/promo', destination: 'https://example.com/spring-sale', clicks: 156 },
-    { short: 'ezrt.io/docs', destination: 'https://docs.example.com', clicks: 89 },
-    { short: 'ezrt.io/app', destination: 'https://app.example.com', clicks: 234 },
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [statsData, linksData, workspacesData] = await Promise.all([
+          dashboardApi.getStats(),
+          dashboardApi.getRecentLinks(),
+          workspacesApi.getWorkspaces()
+        ]);
+        setStats(statsData);
+        setRecentLinks(linksData);
+        setWorkspaces(workspacesData);
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#e4d9ff]" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 py-8 space-y-8">
@@ -42,26 +72,30 @@ export default function Dashboard() {
           Current Workspace
         </label>
         <select className="w-full bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] cursor-pointer">
-          <option>Personal Workspace</option>
-          <option>Team Alpha</option>
+          {workspaces.map(ws => (
+            <option key={ws.id} value={ws.id}>{ws.name}</option>
+          ))}
         </select>
       </motion.div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
-        {stats.map(({ label, value, icon: Icon }, index) => (
-          <motion.div
-            key={label}
-            className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] text-center space-y-2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-          >
-            <Icon className="w-5 h-5 mx-auto text-[#e4d9ff]" />
-            <div className="text-2xl">{value}</div>
-            <div className="text-xs text-[rgba(250,250,255,0.6)]">{label}</div>
-          </motion.div>
-        ))}
+        {stats.map(({ label, value, iconName }, index) => {
+          const Icon = iconMap[iconName] || TrendingUp;
+          return (
+            <motion.div
+              key={label}
+              className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] text-center space-y-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+            >
+              <Icon className="w-5 h-5 mx-auto text-[#e4d9ff]" />
+              <div className="text-2xl">{value}</div>
+              <div className="text-xs text-[rgba(250,250,255,0.6)]">{label}</div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Recent Links */}

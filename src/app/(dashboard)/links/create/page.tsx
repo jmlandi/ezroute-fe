@@ -1,13 +1,20 @@
 "use client";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { ArrowLeft, Link as LinkIcon, Hash } from 'lucide-react';
+import { linksApi } from '@/services/api/links';
+import { workspacesApi, Workspace } from '@/services/api/workspaces';
 
 export default function CreateLink() {
   const router = useRouter();
-  const workspaces = [{ id: '1', name: 'Personal Workspace' }];
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    workspacesApi.getWorkspaces().then(setWorkspaces).catch(console.error);
+  }, []);
 
   const [formData, setFormData] = useState({
     destination: '',
@@ -19,10 +26,26 @@ export default function CreateLink() {
     workspace: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock link creation
-    router.push('/links');
+    setIsSubmitting(true);
+    try {
+      await linksApi.createLink({
+        destination: formData.destination,
+        short: formData.customPath ? `ezrt.io/${formData.customPath}` : undefined,
+        workspace: formData.workspace,
+        utm: {
+          source: formData.utmSource,
+          medium: formData.utmMedium,
+          campaign: formData.utmCampaign,
+          term: formData.utmTerm,
+        }
+      });
+      router.push('/links');
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -169,10 +192,11 @@ export default function CreateLink() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] flex items-center justify-center gap-2"
+          disabled={isSubmitting}
+          className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] flex items-center justify-center gap-2 mt-4 disabled:opacity-50"
         >
           <LinkIcon className="w-4 h-4" />
-          Create Link
+          {isSubmitting ? 'Creating...' : 'Create Link'}
         </button>
       </form>
     </div>

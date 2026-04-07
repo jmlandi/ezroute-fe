@@ -3,13 +3,16 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { authApi } from '@/services/api/auth';
 
-import { Eye, EyeOff, Upload } from 'lucide-react';
+import { Eye, EyeOff, Upload, Loader2 } from 'lucide-react';
 
 export default function SignUp() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     handle: '',
     firstName: '',
@@ -30,14 +33,31 @@ export default function SignUp() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.acceptPrivacy) {
       alert('Please accept the Privacy Policy to continue');
       return;
     }
-    // Mock registration
-    router.push('/dashboard');
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Mock registration calling the API layer
+      await authApi.signup({
+        handle: formData.handle,
+        firstName: formData.firstName,
+        email: formData.email,
+        password: formData.password,
+        newsletter: formData.newsletter,
+      });
+      router.push('/dashboard');
+    } catch (err) {
+      setError('An error occurred during sign up.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,6 +71,12 @@ export default function SignUp() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center">
+              {error}
+            </div>
+          )}
+
           {/* Profile Picture */}
           <div className="flex flex-col items-center space-y-3">
             <div className="relative">
@@ -61,7 +87,7 @@ export default function SignUp() {
                   <Upload className="w-8 h-8 text-[rgba(250,250,255,0.4)]" />
                 )}
               </div>
-              <label htmlFor="profile-pic" className="absolute bottom-0 right-0 w-8 h-8 bg-[#e4d9ff] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#d4c9ef] transition-all">
+              <label htmlFor="profile-pic" className={`absolute bottom-0 right-0 w-8 h-8 bg-[#e4d9ff] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#d4c9ef] transition-all ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
                 <Upload className="w-4 h-4 text-[#30343f]" />
               </label>
               <input
@@ -69,6 +95,7 @@ export default function SignUp() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
+                disabled={isLoading}
                 className="hidden"
               />
             </div>
@@ -87,9 +114,10 @@ export default function SignUp() {
                   type="text"
                   value={formData.handle}
                   onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
-                  className="w-full pl-8 pr-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
+                  className="w-full pl-8 pr-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] disabled:opacity-50"
                   placeholder="username"
                   required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -103,9 +131,10 @@ export default function SignUp() {
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
+                className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] disabled:opacity-50"
                 placeholder="John"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -118,9 +147,10 @@ export default function SignUp() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
+                className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] disabled:opacity-50"
                 placeholder="you@example.com"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -134,14 +164,16 @@ export default function SignUp() {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
+                  className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] disabled:opacity-50"
                   placeholder="••••••••"
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors disabled:opacity-50"
+                  disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -151,11 +183,12 @@ export default function SignUp() {
 
           {/* Checkboxes */}
           <div className="space-y-3">
-            <label className="flex items-start gap-3 cursor-pointer group">
+            <label className={`flex items-start gap-3 cursor-pointer group ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
               <input
                 type="checkbox"
                 checked={formData.newsletter}
                 onChange={(e) => setFormData({ ...formData, newsletter: e.target.checked })}
+                disabled={isLoading}
                 className="mt-1 w-4 h-4 rounded border-[rgba(228,217,255,0.2)] bg-[#1e2749] checked:bg-[#e4d9ff] focus:ring-2 focus:ring-[#e4d9ff]"
               />
               <span className="text-sm text-[rgba(250,250,255,0.7)] group-hover:text-[#fafaff]">
@@ -163,13 +196,14 @@ export default function SignUp() {
               </span>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer group">
+            <label className={`flex items-start gap-3 cursor-pointer group ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
               <input
                 type="checkbox"
                 checked={formData.acceptPrivacy}
                 onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
-                className="mt-1 w-4 h-4 rounded border-[rgba(228,217,255,0.2)] bg-[#1e2749] checked:bg-[#e4d9ff] focus:ring-2 focus:ring-[#e4d9ff]"
+                disabled={isLoading}
                 required
+                className="mt-1 w-4 h-4 rounded border-[rgba(228,217,255,0.2)] bg-[#1e2749] checked:bg-[#e4d9ff] focus:ring-2 focus:ring-[#e4d9ff]"
               />
               <span className="text-sm text-[rgba(250,250,255,0.7)] group-hover:text-[#fafaff]">
                 I accept the <Link href="/privacy" className="text-[#e4d9ff] hover:underline">Privacy Policy</Link>
@@ -179,9 +213,11 @@ export default function SignUp() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)]"
+            disabled={isLoading}
+            className="w-full py-3 bg-[#e4d9ff] text-[#30343f] flex justify-center items-center gap-2 rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Create Account
+            {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 

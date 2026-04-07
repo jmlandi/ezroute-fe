@@ -2,24 +2,24 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { ArrowLeft, Users, Link as LinkIcon, Mail, Copy, AlertTriangle } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Users, Link as LinkIcon, Mail, Copy, AlertTriangle, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { workspacesApi, Workspace } from '@/services/api/workspaces';
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [workspace, setWorkspace] = useState<Workspace & { warningDays?: number | null, plan?: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const workspace = {
-    name: 'Team Alpha',
-    owner: '@janedoe',
-    members: 7,
-    links: 45,
-    memberLimit: 10,
-    linkLimit: 60,
-    plan: 'Tier 3',
-    warningDays: null, // Set to a number to show downgrade warning
-  };
+  useEffect(() => {
+    if (typeof id === 'string') {
+      workspacesApi.getWorkspace(id).then(ws => {
+        setWorkspace({ ...ws, warningDays: null, plan: 'Tier 3' });
+      }).catch(console.error).finally(() => setLoading(false));
+    }
+  }, [id]);
 
   const members = [
     { id: 1, name: 'Jane Doe', handle: '@janedoe', role: 'Owner', avatar: null },
@@ -42,12 +42,26 @@ export default function WorkspaceDetail() {
     console.log('Removing member:', memberId);
   };
 
-  const sendEmailInvite = (e: React.FormEvent) => {
+  const sendEmailInvite = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock email invite
+    try {
+      if (typeof id === 'string') {
+        await workspacesApi.inviteMember(id, inviteEmail, 'Member');
+      }
+    } catch (err) {
+      console.error(err);
+    }
     setInviteEmail('');
     setShowInviteDialog(false);
   };
+
+  if (loading || !workspace) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#e4d9ff]" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 py-8 space-y-6">
@@ -96,13 +110,13 @@ export default function WorkspaceDetail() {
                 Members
               </span>
               <span>
-                {workspace.members}/{workspace.memberLimit}
+                {workspace.members || 0}/{workspace.memberLimit || 1}
               </span>
             </div>
             <div className="h-2 bg-[#1e2749] rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#e4d9ff] rounded-full transition-all"
-                style={{ width: `${(workspace.members / workspace.memberLimit) * 100}%` }}
+                style={{ width: `${((workspace.members || 0) / (workspace.memberLimit || 1)) * 100}%` }}
               />
             </div>
           </div>
@@ -114,13 +128,13 @@ export default function WorkspaceDetail() {
                 Links
               </span>
               <span>
-                {workspace.links}/{workspace.linkLimit}
+                {workspace.links || 0}/{workspace.linkLimit || 1}
               </span>
             </div>
             <div className="h-2 bg-[#1e2749] rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#e4d9ff] rounded-full transition-all"
-                style={{ width: `${(workspace.links / workspace.linkLimit) * 100}%` }}
+                style={{ width: `${((workspace.links || 0) / (workspace.linkLimit || 1)) * 100}%` }}
               />
             </div>
           </div>

@@ -1,22 +1,46 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Mail, Lock, Trash2, Upload } from 'lucide-react';
+import { User, Mail, Lock, Trash2, Upload, Loader2 } from 'lucide-react';
+import { settingsApi, UserProfile } from '@/services/api/settings';
 
 export default function Settings() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [userData, setUserData] = useState({
-    handle: 'johndoe',
-    firstName: 'John',
-    email: 'john@example.com',
-    newsletter: true,
-    lastHandleChange: '2025-12-06', // 60 days from today
-  });
-
+  const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const profile = await settingsApi.getProfile();
+        setUserData(profile);
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  const handleSave = async () => {
+    if (!userData) return;
+    setSaving(true);
+    try {
+      const updated = await settingsApi.updateProfile(userData);
+      setUserData(updated);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const canChangeHandle = () => {
+    if (!userData) return false;
     const lastChange = new Date(userData.lastHandleChange);
     const now = new Date();
     const daysSince = Math.floor((now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24));
@@ -24,11 +48,20 @@ export default function Settings() {
   };
 
   const daysUntilHandleChange = () => {
+    if (!userData) return 0;
     const lastChange = new Date(userData.lastHandleChange);
     const now = new Date();
     const daysSince = Math.floor((now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24));
     return Math.max(0, 60 - daysSince);
   };
+
+  if (loading || !userData) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#e4d9ff]" />
+      </div>
+    );
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,8 +140,8 @@ export default function Settings() {
             </p>
           )}
           {canChangeHandle() && (
-            <button className="text-sm text-[#e4d9ff] hover:underline">
-              Save Handle
+            <button onClick={handleSave} disabled={saving} className="text-sm text-[#e4d9ff] hover:underline disabled:opacity-50">
+              {saving ? 'Saving...' : 'Save Handle'}
             </button>
           )}
         </div>
@@ -145,8 +178,8 @@ export default function Settings() {
             />
           </div>
 
-          <button className="text-sm text-[#e4d9ff] hover:underline">
-            Save Changes
+          <button onClick={handleSave} disabled={saving} className="text-sm text-[#e4d9ff] hover:underline disabled:opacity-50">
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>

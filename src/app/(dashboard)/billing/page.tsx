@@ -1,42 +1,41 @@
 "use client";
 
-import { Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, Loader2 } from 'lucide-react';
+import { billingApi, Plan, CurrentBilling } from '@/services/api/billing';
 
 export default function Billing() {
-  const currentPlan = 'Tier 2';
-  const lastPaymentDate = '2022-01-01';
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [currentBilling, setCurrentBilling] = useState<CurrentBilling | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const plans = [
-    {
-      tier: 'Tier 1',
-      price: '$0',
-      workspaces: 1,
-      members: 3,
-      links: 15,
-    },
-    {
-      tier: 'Tier 2',
-      price: '$19',
-      workspaces: 3,
-      members: 5,
-      links: 30,
-      recommended: true,
-    },
-    {
-      tier: 'Tier 3',
-      price: '$39',
-      workspaces: 6,
-      members: 10,
-      links: 60,
-    },
-    {
-      tier: 'Tier 4',
-      price: '$79',
-      workspaces: 12,
-      members: 20,
-      links: 120,
-    },
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [plansData, billingData] = await Promise.all([
+          billingApi.getPlans(),
+          billingApi.getCurrentBilling(),
+        ]);
+        setPlans(plansData);
+        setCurrentBilling(billingData);
+      } catch (error) {
+        console.error('Failed to load billing data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading || !currentBilling) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#e4d9ff]" />
+      </div>
+    );
+  }
+
+  const { currentPlan, lastPaymentDate } = currentBilling;
 
   return (
     <div className="px-6 py-8 space-y-8">

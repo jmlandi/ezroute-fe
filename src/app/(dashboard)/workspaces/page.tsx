@@ -1,30 +1,36 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-import { Plus, Users, Link as LinkIcon } from 'lucide-react';
+import { Plus, Users, Link as LinkIcon, Loader2 } from 'lucide-react';
+import { workspacesApi, Workspace } from '@/services/api/workspaces';
 
 export default function Workspaces() {
-  const workspaces = [
-    {
-      id: 1,
-      name: 'Personal Workspace',
-      owner: '@johndoe',
-      members: 1,
-      links: 12,
-      memberLimit: 3,
-      linkLimit: 15,
-    },
-    {
-      id: 2,
-      name: 'Team Alpha',
-      owner: '@janedoe',
-      members: 7,
-      links: 12,
-      memberLimit: 10,
-      linkLimit: 60,
-    },
-  ];
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await workspacesApi.getWorkspaces();
+        setWorkspaces(data);
+      } catch (error) {
+        console.error('Failed to load workspaces:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#e4d9ff]" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 py-8 space-y-6">
@@ -66,13 +72,13 @@ export default function Workspaces() {
                     Members
                   </span>
                   <span>
-                    {workspace.members}/{workspace.memberLimit}
+                    {workspace.members || 0}/{workspace.memberLimit || 1}
                   </span>
                 </div>
                 <div className="h-1.5 bg-[#1e2749] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#e4d9ff] rounded-full transition-all"
-                    style={{ width: `${(workspace.members / workspace.memberLimit) * 100}%` }}
+                    style={{ width: `${((workspace.members || 0) / (workspace.memberLimit || 1)) * 100}%` }}
                   />
                 </div>
               </div>
@@ -84,13 +90,13 @@ export default function Workspaces() {
                     Links
                   </span>
                   <span>
-                    {workspace.links}/{workspace.linkLimit}
+                    {workspace.links || 0}/{workspace.linkLimit || 1}
                   </span>
                 </div>
                 <div className="h-1.5 bg-[#1e2749] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#e4d9ff] rounded-full transition-all"
-                    style={{ width: `${(workspace.links / workspace.linkLimit) * 100}%` }}
+                    style={{ width: `${((workspace.links || 0) / (workspace.linkLimit || 1)) * 100}%` }}
                   />
                 </div>
               </div>

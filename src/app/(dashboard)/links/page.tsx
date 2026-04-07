@@ -1,57 +1,37 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
 
-import { Plus, Copy, BarChart3 } from 'lucide-react';
+import { Plus, Copy, BarChart3, Loader2 } from 'lucide-react';
+import { linksApi, LinkItem } from '@/services/api/links';
+import { workspacesApi, Workspace } from '@/services/api/workspaces';
 
 export default function Links() {
-
-  const [workspace, setWorkspace] = useState('');
-  const workspaces = [{ id: '1', name: 'Personal Workspace' }];
-
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [links, setLinks] = useState<LinkItem[]>([]);
   const [formData, setFormData] = useState({
     workspace: '',
   });
+  const [loading, setLoading] = useState(true);
 
-  const links = [
-    {
-      id: 1,
-      short: 'ezrt.io/promo',
-      destination: 'https://example.com/spring-sale',
-      utm: { source: 'twitter', medium: 'social', campaign: 'spring24', term: 'spring24_video' },
-      clicks: 156,
-      created: '2026-03-15',
-      workspace: 'Personal Workspace'
-    },
-    {
-      id: 2,
-      short: 'ezrt.io/docs',
-      destination: 'https://docs.example.com',
-      utm: null,
-      clicks: 89,
-      created: '2026-03-10',
-      workspace: 'Personal Workspace'
-    },
-    {
-      id: 3,
-      short: 'ezrt.io/app',
-      destination: 'https://app.example.com/onboarding',
-      utm: { source: 'email', medium: 'newsletter', campaign: 'launch' },
-      clicks: 234,
-      created: '2026-03-05',
-      workspace: 'Personal Workspace'
-    },
-    {
-      id: 4,
-      short: 'ezrt.io/blog',
-      destination: 'https://blog.example.com/new-features',
-      utm: { source: 'linkedin', medium: 'social', campaign: 'content' },
-      clicks: 67,
-      created: '2026-03-01',
-      workspace: 'Personal Workspace'
-    },
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [wsData, linksData] = await Promise.all([
+          workspacesApi.getWorkspaces(),
+          linksApi.getLinks()
+        ]);
+        setWorkspaces(wsData);
+        setLinks(linksData);
+      } catch (error) {
+        console.error('Failed to load links data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const copyLink = (short: string) => {
     navigator.clipboard.writeText(`https://${short}`);
