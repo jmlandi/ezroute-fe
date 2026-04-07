@@ -1,5 +1,5 @@
 "use client";
-import Link from 'next/link';
+
 import { useRouter } from 'next/navigation';
 
 import { motion } from 'motion/react';
@@ -7,14 +7,14 @@ import { Zap, Users, BarChart3, Shield } from 'lucide-react';
 
 export default function Welcome() {
   const router = useRouter();
-  
+
   const features = [
     { icon: Zap, title: 'Fast & Simple', desc: 'Create short links in seconds' },
     { icon: Users, title: 'Team Collaboration', desc: 'Work together in workspaces' },
     { icon: BarChart3, title: 'UTM Tracking', desc: 'Track campaigns with ease' },
     { icon: Shield, title: 'Secure', desc: 'Your data is protected' },
   ];
-  
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       {/* Background effects */}
@@ -22,15 +22,15 @@ export default function Welcome() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#e4d9ff]/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#273469]/20 rounded-full blur-[100px]" />
       </div>
-      
-      <motion.div 
+
+      <motion.div
         className="w-full max-w-md space-y-12 relative z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
         {/* Logo & Title */}
-        <motion.div 
+        <motion.div
           className="text-center space-y-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -41,7 +41,7 @@ export default function Welcome() {
             Link management,<br />simplified.
           </p>
         </motion.div>
-        
+
         {/* Features */}
         <div className="grid grid-cols-2 gap-4">
           {features.map((feature, index) => (
@@ -60,9 +60,9 @@ export default function Welcome() {
             </motion.div>
           ))}
         </div>
-        
+
         {/* CTA Buttons */}
-        <motion.div 
+        <motion.div
           className="space-y-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,9 +81,9 @@ export default function Welcome() {
             Sign In
           </button>
         </motion.div>
-        
+
         {/* Footer */}
-        <motion.div 
+        <motion.div
           className="text-center text-xs text-[rgba(250,250,255,0.4)]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

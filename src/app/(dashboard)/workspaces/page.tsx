@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 
 import { Plus, Users, Link as LinkIcon } from 'lucide-react';
@@ -23,7 +25,7 @@ export default function Workspaces() {
       linkLimit: 60,
     },
   ];
-  
+
   return (
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
@@ -36,7 +38,7 @@ export default function Workspaces() {
           <Plus className="w-5 h-5" />
         </button>
       </div>
-      
+
       {/* Workspace List */}
       <div className="space-y-4">
         {workspaces.map((workspace) => (
@@ -52,7 +54,7 @@ export default function Workspaces() {
                 Owner: {workspace.owner}
               </p>
             </div>
-            
+
             {/* Usage Stats */}
             <div className="space-y-3">
               <div className="space-y-1.5">
@@ -66,13 +68,13 @@ export default function Workspaces() {
                   </span>
                 </div>
                 <div className="h-1.5 bg-[#1e2749] rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-[#e4d9ff] rounded-full transition-all"
                     style={{ width: `${(workspace.members / workspace.memberLimit) * 100}%` }}
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm">
                   <span className="flex items-center gap-1.5 text-[rgba(250,250,255,0.6)]">
@@ -84,7 +86,7 @@ export default function Workspaces() {
                   </span>
                 </div>
                 <div className="h-1.5 bg-[#1e2749] rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-[#e4d9ff] rounded-full transition-all"
                     style={{ width: `${(workspace.links / workspace.linkLimit) * 100}%` }}
                   />

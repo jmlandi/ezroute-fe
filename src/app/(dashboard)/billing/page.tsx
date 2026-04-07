@@ -1,12 +1,15 @@
+"use client";
+
 import { Check } from 'lucide-react';
 
 export default function Billing() {
   const currentPlan = 'Tier 2';
-  
+  const lastPaymentDate = '2022-01-01';
+
   const plans = [
     {
       tier: 'Tier 1',
-      price: '$9',
+      price: '$0',
       workspaces: 1,
       members: 3,
       links: 15,
@@ -34,7 +37,7 @@ export default function Billing() {
       links: 120,
     },
   ];
-  
+
   return (
     <div className="px-6 py-8 space-y-8">
       {/* Header */}
@@ -44,26 +47,34 @@ export default function Billing() {
           Choose the plan that fits your needs
         </p>
       </div>
-      
+
       {/* Current Plan */}
       <div className="bg-[#273469] rounded-lg p-5 border border-[rgba(228,217,255,0.2)] text-center space-y-1">
         <p className="text-xs text-[rgba(250,250,255,0.5)]">Current Plan</p>
         <p className="text-xl text-[#e4d9ff]">{currentPlan}</p>
       </div>
-      
+
+      {/* Last payment date */}
+      <div className="bg-[#273469] rounded-lg p-5 border border-[rgba(228,217,255,0.2)] text-center space-y-1">
+        <p className="text-xs text-[rgba(250,250,255,0.5)]">Last payment date</p>
+        <p className="text-xl text-[#e4d9ff]">{lastPaymentDate}</p>
+      </div>
+
+      {/* Horizontal line */}
+      <div className="w-full border border-[rgba(228,217,255,0.2)] rounded-lg"></div>
+
       {/* Plans Grid */}
       <div className="space-y-4">
         {plans.map((plan) => {
           const isCurrent = plan.tier === currentPlan;
-          
+
           return (
             <div
               key={plan.tier}
-              className={`rounded-lg p-5 border transition-all ${
-                plan.recommended
-                  ? 'bg-[#e4d9ff]/5 border-[#e4d9ff]/30'
-                  : 'bg-[#273469] border-[rgba(228,217,255,0.1)]'
-              }`}
+              className={`rounded-lg p-5 border transition-all ${plan.recommended
+                ? 'bg-[#e4d9ff]/5 border-[#e4d9ff]/30'
+                : 'bg-[#273469] border-[rgba(228,217,255,0.1)]'
+                }`}
             >
               {/* Header */}
               <div className="flex justify-between items-start mb-4">
@@ -88,7 +99,7 @@ export default function Billing() {
                   </div>
                 )}
               </div>
-              
+
               {/* Features */}
               <div className="space-y-2.5 mb-4">
                 <div className="flex items-center gap-2 text-sm">
@@ -114,7 +125,7 @@ export default function Billing() {
                   <span>Custom short paths</span>
                 </div>
               </div>
-              
+
               {/* Action Button */}
               {!isCurrent && (
                 <button className="w-full py-2.5 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all text-sm">
@@ -127,7 +138,7 @@ export default function Billing() {
           );
         })}
       </div>
-      
+
       {/* Additional Info */}
       <div className="text-center space-y-2 pt-4">
         <p className="text-xs text-[rgba(250,250,255,0.5)]">

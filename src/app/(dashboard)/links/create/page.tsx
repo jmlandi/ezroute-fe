@@ -7,6 +7,8 @@ import { ArrowLeft, Link as LinkIcon, Hash } from 'lucide-react';
 
 export default function CreateLink() {
   const router = useRouter();
+  const workspaces = [{ id: '1', name: 'Personal Workspace' }];
+
   const [formData, setFormData] = useState({
     destination: '',
     customPath: '',
@@ -14,14 +16,15 @@ export default function CreateLink() {
     utmMedium: '',
     utmCampaign: '',
     utmTerm: '',
+    workspace: '',
   });
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock link creation
     router.push('/links');
   };
-  
+
   return (
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
@@ -30,7 +33,7 @@ export default function CreateLink() {
           <ArrowLeft className="w-4 h-4" />
           Back to links
         </Link>
-        
+
         <div>
           <h1 className="text-2xl">Create Link</h1>
           <p className="text-sm text-[rgba(250,250,255,0.6)] mt-1">
@@ -38,7 +41,7 @@ export default function CreateLink() {
           </p>
         </div>
       </div>
-      
+
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Destination URL */}
@@ -56,37 +59,34 @@ export default function CreateLink() {
             required
           />
         </div>
-        
-        {/* Custom Path */}
+
+        {/* Select Workspace */}
         <div className="space-y-2">
-          <label htmlFor="customPath" className="block text-sm">
-            Custom Short Path
+          <label htmlFor="workspace" className="block text-sm">
+            Select Workspace
           </label>
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] text-sm">
-              ezrt.io/
-            </div>
-            <input
-              id="customPath"
-              type="text"
-              value={formData.customPath}
-              onChange={(e) => setFormData({ ...formData, customPath: e.target.value })}
-              placeholder="my-link"
-              className="w-full pl-[88px] pr-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
-            />
-          </div>
-          <p className="text-xs text-[rgba(250,250,255,0.4)]">
-            Leave empty for auto-generated path
-          </p>
+          <select
+            id="workspace"
+            value={formData.workspace}
+            onChange={(e) => setFormData({ ...formData, workspace: e.target.value })}
+            className="w-full px-4 py-3 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)]"
+          >
+            <option value="">Select Workspace</option>
+            {workspaces.map((workspace) => (
+              <option key={workspace.id} value={workspace.id}>
+                {workspace.name}
+              </option>
+            ))}
+          </select>
         </div>
-        
+
         {/* UTM Parameters */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm text-[rgba(250,250,255,0.7)]">
             <Hash className="w-4 h-4" />
             UTM Parameters (Optional)
           </div>
-          
+
           <div className="space-y-3">
             <div className="space-y-2">
               <label htmlFor="utmSource" className="block text-sm">
@@ -101,7 +101,7 @@ export default function CreateLink() {
                 className="w-full px-4 py-2.5 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] text-sm"
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="utmMedium" className="block text-sm">
                 Medium
@@ -115,7 +115,7 @@ export default function CreateLink() {
                 className="w-full px-4 py-2.5 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] text-sm"
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="utmCampaign" className="block text-sm">
                 Campaign
@@ -138,21 +138,21 @@ export default function CreateLink() {
                 id="utmTerm"
                 type="text"
                 value={formData.utmTerm}
-                onChange={(e) => setFormData({ ...formData, utmCampaign: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, utmTerm: e.target.value })}
                 placeholder="spring-sale, launch, promo"
                 className="w-full px-4 py-2.5 bg-[#1e2749] border border-[rgba(228,217,255,0.1)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e4d9ff] focus:border-transparent transition-all placeholder:text-[rgba(250,250,255,0.3)] text-sm"
               />
             </div>
           </div>
         </div>
-        
+
         {/* Preview */}
         {formData.destination && (
           <div className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] space-y-2">
             <div className="text-xs text-[rgba(250,250,255,0.5)]">Preview</div>
             <div className="space-y-1">
               <div className="text-sm text-[#e4d9ff]">
-                ezrt.io/{formData.customPath || 'abc123'}
+                ezroute.site/{formData.customPath || 'a3b4C4'}
               </div>
               <div className="text-xs text-[rgba(250,250,255,0.4)] break-all">
                 {formData.destination}
@@ -160,11 +160,12 @@ export default function CreateLink() {
                 {formData.utmSource && `utm_source=${formData.utmSource}`}
                 {formData.utmMedium && `${formData.utmSource ? '&' : ''}utm_medium=${formData.utmMedium}`}
                 {formData.utmCampaign && `${formData.utmSource || formData.utmMedium ? '&' : ''}utm_campaign=${formData.utmCampaign}`}
+                {formData.utmTerm && `${formData.utmSource || formData.utmMedium || formData.utmCampaign ? '&' : ''}utm_term=${formData.utmTerm}`}
               </div>
             </div>
           </div>
         )}
-        
+
         {/* Submit Button */}
         <button
           type="submit"

@@ -1,4 +1,5 @@
 "use client";
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,7 +18,7 @@ export default function SignUp() {
     newsletter: false,
     acceptPrivacy: false,
   });
-  
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -28,7 +29,7 @@ export default function SignUp() {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.acceptPrivacy) {
@@ -38,7 +39,7 @@ export default function SignUp() {
     // Mock registration
     router.push('/dashboard');
   };
-  
+
   return (
     <div className="min-h-screen px-6 py-8 pb-24">
       <div className="w-full max-w-md mx-auto space-y-8">
@@ -47,7 +48,7 @@ export default function SignUp() {
           <h1 className="text-3xl tracking-tight">Create Account</h1>
           <p className="text-[rgba(250,250,255,0.6)] text-sm">Join ezroute.site</p>
         </div>
-        
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Picture */}
@@ -73,7 +74,7 @@ export default function SignUp() {
             </div>
             <p className="text-xs text-[rgba(250,250,255,0.5)]">Upload profile picture</p>
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="handle" className="block text-sm">
@@ -92,7 +93,7 @@ export default function SignUp() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="firstName" className="block text-sm">
                 First Name
@@ -107,7 +108,7 @@ export default function SignUp() {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm">
                 Email
@@ -122,7 +123,7 @@ export default function SignUp() {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="password" className="block text-sm">
                 Password
@@ -147,7 +148,7 @@ export default function SignUp() {
               </div>
             </div>
           </div>
-          
+
           {/* Checkboxes */}
           <div className="space-y-3">
             <label className="flex items-start gap-3 cursor-pointer group">
@@ -161,7 +162,7 @@ export default function SignUp() {
                 Subscribe to newsletter
               </span>
             </label>
-            
+
             <label className="flex items-start gap-3 cursor-pointer group">
               <input
                 type="checkbox"
@@ -175,7 +176,7 @@ export default function SignUp() {
               </span>
             </label>
           </div>
-          
+
           <button
             type="submit"
             className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)]"
@@ -183,7 +184,7 @@ export default function SignUp() {
             Create Account
           </button>
         </form>
-        
+
         {/* Sign In Link */}
         <div className="text-center text-sm">
           <span className="text-[rgba(250,250,255,0.6)]">Already have an account? </span>

@@ -9,7 +9,7 @@ export default function WorkspaceDetail() {
   const { id } = useParams();
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
-  
+
   const workspace = {
     name: 'Team Alpha',
     owner: '@janedoe',
@@ -20,31 +20,35 @@ export default function WorkspaceDetail() {
     plan: 'Tier 3',
     warningDays: null, // Set to a number to show downgrade warning
   };
-  
+
   const members = [
-    { name: 'Jane Doe', handle: '@janedoe', role: 'Owner', avatar: null },
-    { name: 'John Smith', handle: '@johnsmith', role: 'Admin', avatar: null },
-    { name: 'Alice Johnson', handle: '@alice', role: 'Member', avatar: null },
-    { name: 'Bob Wilson', handle: '@bob', role: 'Member', avatar: null },
-    { name: 'Carol Davis', handle: '@carol', role: 'Member', avatar: null },
-    { name: 'David Brown', handle: '@david', role: 'Member', avatar: null },
-    { name: 'Emma White', handle: '@emma', role: 'Member', avatar: null },
+    { id: 1, name: 'Jane Doe', handle: '@janedoe', role: 'Owner', avatar: null },
+    { id: 2, name: 'John Smith', handle: '@johnsmith', role: 'Admin', avatar: null },
+    { id: 3, name: 'Alice Johnson', handle: '@alice', role: 'Member', avatar: null },
+    { id: 4, name: 'Bob Wilson', handle: '@bob', role: 'Member', avatar: null },
+    { id: 5, name: 'Carol Davis', handle: '@carol', role: 'Member', avatar: null },
+    { id: 6, name: 'David Brown', handle: '@david', role: 'Member', avatar: null },
+    { id: 7, name: 'Emma White', handle: '@emma', role: 'Member', avatar: null },
   ];
-  
+
   const inviteLink = `https://ezrt.io/invite/${id}-abc123`;
-  
+
   const copyInviteLink = () => {
     navigator.clipboard.writeText(inviteLink);
     // In real app, show toast notification
   };
-  
+
+  const removeMember = (memberId: number) => {
+    console.log('Removing member:', memberId);
+  };
+
   const sendEmailInvite = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock email invite
     setInviteEmail('');
     setShowInviteDialog(false);
   };
-  
+
   return (
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
@@ -53,7 +57,7 @@ export default function WorkspaceDetail() {
           <ArrowLeft className="w-4 h-4" />
           Back to workspaces
         </Link>
-        
+
         <div>
           <h1 className="text-2xl">{workspace.name}</h1>
           <p className="text-sm text-[rgba(250,250,255,0.6)] mt-1">
@@ -61,7 +65,7 @@ export default function WorkspaceDetail() {
           </p>
         </div>
       </div>
-      
+
       {/* Warning Banner (if downgraded) */}
       {workspace.warningDays && (
         <div className="bg-[#ff6b6b]/10 border border-[#ff6b6b]/30 rounded-lg p-4 flex gap-3">
@@ -79,11 +83,11 @@ export default function WorkspaceDetail() {
           </div>
         </div>
       )}
-      
+
       {/* Usage Stats */}
       <div className="bg-[#273469] rounded-lg p-5 border border-[rgba(228,217,255,0.1)] space-y-4">
         <h3 className="text-sm text-[rgba(250,250,255,0.6)]">Plan Limits</h3>
-        
+
         <div className="space-y-3">
           <div className="space-y-1.5">
             <div className="flex justify-between text-sm">
@@ -96,13 +100,13 @@ export default function WorkspaceDetail() {
               </span>
             </div>
             <div className="h-2 bg-[#1e2749] rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-[#e4d9ff] rounded-full transition-all"
                 style={{ width: `${(workspace.members / workspace.memberLimit) * 100}%` }}
               />
             </div>
           </div>
-          
+
           <div className="space-y-1.5">
             <div className="flex justify-between text-sm">
               <span className="flex items-center gap-1.5">
@@ -114,7 +118,7 @@ export default function WorkspaceDetail() {
               </span>
             </div>
             <div className="h-2 bg-[#1e2749] rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-[#e4d9ff] rounded-full transition-all"
                 style={{ width: `${(workspace.links / workspace.linkLimit) * 100}%` }}
               />
@@ -122,22 +126,22 @@ export default function WorkspaceDetail() {
           </div>
         </div>
       </div>
-      
+
       {/* Members Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg">Members ({members.length})</h2>
-          <button 
+          <button
             onClick={() => setShowInviteDialog(true)}
             className="px-4 py-2 bg-[#e4d9ff] text-[#30343f] rounded-lg text-sm hover:bg-[#d4c9ef] transition-all"
           >
             Invite
           </button>
         </div>
-        
+
         <div className="space-y-2">
           {members.map((member) => (
-            <div 
+            <div
               key={member.handle}
               className="bg-[#273469] rounded-lg p-4 border border-[rgba(228,217,255,0.1)] flex items-center gap-3"
             >
@@ -151,11 +155,18 @@ export default function WorkspaceDetail() {
               <div className="text-xs px-2 py-1 bg-[#1e2749] rounded text-[rgba(250,250,255,0.7)]">
                 {member.role}
               </div>
+              {/* Remove member button */}
+              <button
+                onClick={() => removeMember(member.id)}
+                className="px-2 py-1 bg-[#e4d9ff] text-[#30343f] rounded-md text-xs hover:bg-[#d4c9ef] transition-all"
+              >
+                Remove
+              </button>
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* Invite Dialog */}
       {showInviteDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-6">
@@ -166,7 +177,7 @@ export default function WorkspaceDetail() {
                 Invite people to join {workspace.name}
               </p>
             </div>
-            
+
             {/* Invite Link */}
             <div className="space-y-2">
               <label className="text-sm text-[rgba(250,250,255,0.6)]">
@@ -187,7 +198,7 @@ export default function WorkspaceDetail() {
                 </button>
               </div>
             </div>
-            
+
             {/* Email Invite */}
             <div className="relative">
               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-[rgba(228,217,255,0.1)]" />
@@ -197,7 +208,7 @@ export default function WorkspaceDetail() {
                 </span>
               </div>
             </div>
-            
+
             <form onSubmit={sendEmailInvite} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm text-[rgba(250,250,255,0.6)]">
@@ -221,7 +232,7 @@ export default function WorkspaceDetail() {
                 </div>
               </div>
             </form>
-            
+
             <button
               onClick={() => setShowInviteDialog(false)}
               className="w-full py-2 text-sm text-[rgba(250,250,255,0.6)] hover:text-[#fafaff] transition-colors"
