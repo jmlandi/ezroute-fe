@@ -47,5 +47,10 @@ export const workspacesApi = {
   inviteMember: async (workspaceId: string, email: string, role: string): Promise<boolean> => {
     const response = await apiClient.post({ success: true }, 600);
     return response.data.success;
+  },
+
+  removeMember: async (workspaceId: string, memberId: string | number): Promise<boolean> => {
+    const response = await apiClient.post({ success: true }, 600);
+    return response.data.success;
   }
 };

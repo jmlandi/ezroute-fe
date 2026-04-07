@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { ArrowLeft, Users, Link as LinkIcon, Mail, Copy, AlertTriangle, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { workspacesApi, Workspace } from '@/services/api/workspaces';
+import { Modal } from '@/components/ui/modal';
 
 export default function WorkspaceDetail() {
   const { id } = useParams();
@@ -12,6 +13,9 @@ export default function WorkspaceDetail() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [workspace, setWorkspace] = useState<Workspace & { warningDays?: number | null, plan?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalMeta, setModalMeta] = useState<{ isOpen: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({
+    isOpen: false, title: '', message: '', type: 'info'
+  });
 
   useEffect(() => {
     if (typeof id === 'string') {
@@ -21,7 +25,7 @@ export default function WorkspaceDetail() {
     }
   }, [id]);
 
-  const members = [
+  const [members, setMembers] = useState([
     { id: 1, name: 'Jane Doe', handle: '@janedoe', role: 'Owner', avatar: null },
     { id: 2, name: 'John Smith', handle: '@johnsmith', role: 'Admin', avatar: null },
     { id: 3, name: 'Alice Johnson', handle: '@alice', role: 'Member', avatar: null },
@@ -29,7 +33,7 @@ export default function WorkspaceDetail() {
     { id: 5, name: 'Carol Davis', handle: '@carol', role: 'Member', avatar: null },
     { id: 6, name: 'David Brown', handle: '@david', role: 'Member', avatar: null },
     { id: 7, name: 'Emma White', handle: '@emma', role: 'Member', avatar: null },
-  ];
+  ]);
 
   const inviteLink = `https://ezrt.io/invite/${id}-abc123`;
 
@@ -38,8 +42,16 @@ export default function WorkspaceDetail() {
     // In real app, show toast notification
   };
 
-  const removeMember = (memberId: number) => {
-    console.log('Removing member:', memberId);
+  const removeMember = async (memberId: number) => {
+    try {
+      if (typeof id === 'string') {
+        await workspacesApi.removeMember(id, memberId);
+        setMembers(members.filter(m => m.id !== memberId));
+        setModalMeta({ isOpen: true, title: 'Member Removed', message: 'The user was successfully removed from the workspace.', type: 'success' });
+      }
+    } catch (err) {
+      setModalMeta({ isOpen: true, title: 'Error', message: 'Failed to remove member.', type: 'error' });
+    }
   };
 
   const sendEmailInvite = async (e: React.FormEvent) => {
@@ -256,6 +268,14 @@ export default function WorkspaceDetail() {
           </div>
         </div>
       )}
+      
+      <Modal 
+        isOpen={modalMeta.isOpen} 
+        onClose={() => setModalMeta(prev => ({...prev, isOpen: false}))} 
+        title={modalMeta.title} 
+        message={modalMeta.message} 
+        type={modalMeta.type} 
+      />
     </div>
   );
 }

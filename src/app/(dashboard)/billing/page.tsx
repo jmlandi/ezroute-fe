@@ -3,11 +3,16 @@
 import { useState, useEffect } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { billingApi, Plan, CurrentBilling } from '@/services/api/billing';
+import { Modal } from '@/components/ui/modal';
 
 export default function Billing() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [currentBilling, setCurrentBilling] = useState<CurrentBilling | null>(null);
   const [loading, setLoading] = useState(true);
+  const [changingPlan, setChangingPlan] = useState(false);
+  const [modalMeta, setModalMeta] = useState<{ isOpen: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({
+    isOpen: false, title: '', message: '', type: 'info'
+  });
 
   useEffect(() => {
     async function fetchData() {
@@ -26,6 +31,19 @@ export default function Billing() {
     }
     fetchData();
   }, []);
+
+  const handleChangePlan = async (newPlan: string) => {
+    setChangingPlan(true);
+    try {
+      const res = await billingApi.changePlan(newPlan);
+      setCurrentBilling(prev => prev ? { ...prev, currentPlan: res.currentPlan } : null);
+      setModalMeta({ isOpen: true, title: 'Plan Changed', message: `Successfully changed plan to ${newPlan}.`, type: 'success' });
+    } catch (err) {
+      setModalMeta({ isOpen: true, title: 'Error', message: 'Failed to change plan.', type: 'error' });
+    } finally {
+      setChangingPlan(false);
+    }
+  };
 
   if (loading || !currentBilling) {
     return (
@@ -127,16 +145,28 @@ export default function Billing() {
 
               {/* Action Button */}
               {!isCurrent && (
-                <button className="w-full py-2.5 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all text-sm">
-                  {plans.findIndex(p => p.tier === plan.tier) > plans.findIndex(p => p.tier === currentPlan)
+                <button 
+                  onClick={() => handleChangePlan(plan.tier)}
+                  disabled={changingPlan}
+                  className="w-full py-2.5 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all text-sm disabled:opacity-50"
+                >
+                  {changingPlan ? 'Processing...' : (plans.findIndex(p => p.tier === plan.tier) > plans.findIndex(p => p.tier === currentPlan)
                     ? 'Upgrade'
-                    : 'Downgrade'}
+                    : 'Downgrade')}
                 </button>
               )}
             </div>
           );
         })}
       </div>
+
+      <Modal 
+        isOpen={modalMeta.isOpen} 
+        onClose={() => setModalMeta(prev => ({...prev, isOpen: false}))} 
+        title={modalMeta.title} 
+        message={modalMeta.message} 
+        type={modalMeta.type} 
+      />
 
       {/* Additional Info */}
       <div className="text-center space-y-2 pt-4">

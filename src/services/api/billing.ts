@@ -33,5 +33,10 @@ export const billingApi = {
     };
     const response = await apiClient.get(defaultBilling, 400);
     return response.data;
+  },
+
+  changePlan: async (newPlanTier: string): Promise<{ success: boolean; currentPlan: string }> => {
+    const response = await apiClient.post({ success: true, currentPlan: newPlanTier }, 800);
+    return response.data;
   }
 };

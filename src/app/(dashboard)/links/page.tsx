@@ -16,22 +16,18 @@ export default function Links() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [wsData, linksData] = await Promise.all([
-          workspacesApi.getWorkspaces(),
-          linksApi.getLinks()
-        ]);
-        setWorkspaces(wsData);
-        setLinks(linksData);
-      } catch (error) {
-        console.error('Failed to load links data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
+    workspacesApi.getWorkspaces()
+      .then(setWorkspaces)
+      .catch(err => console.error('Failed to load workspaces:', err));
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    linksApi.getLinks(formData.workspace)
+      .then(setLinks)
+      .catch(err => console.error('Failed to load links data:', err))
+      .finally(() => setLoading(false));
+  }, [formData.workspace]);
 
   const copyLink = (short: string) => {
     navigator.clipboard.writeText(`https://${short}`);

@@ -25,8 +25,13 @@ export const linksApi = {
       { id: 3, short: 'ezrt.io/app', destination: 'https://app.example.com/onboarding', utm: { source: 'email', medium: 'newsletter', campaign: 'launch' }, clicks: 234, created: '2026-03-05', workspace: 'Personal Workspace' },
       { id: 4, short: 'ezrt.io/blog', destination: 'https://blog.example.com/new-features', utm: { source: 'linkedin', medium: 'social', campaign: 'content' }, clicks: 67, created: '2026-03-01', workspace: 'Personal Workspace' }
     ];
-    // Return all or filter conceptually
-    const response = await apiClient.get(mockLinks, 500);
+    
+    // Abstracted mocked filter
+    const filteredLinks = workspaceId 
+      ? mockLinks.filter(l => l.workspace === (workspaceId === '1' ? 'Personal Workspace' : 'Team Alpha'))
+      : mockLinks;
+      
+    const response = await apiClient.get(filteredLinks, 500);
     return response.data;
   },
 
