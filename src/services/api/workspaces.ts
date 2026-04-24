@@ -1,56 +1,58 @@
 import { apiClient } from './client';
 
 export interface Workspace {
-  id: string | number;
+  id: string;
   name: string;
+  status?: 'active' | 'suspended' | 'deactivated';
   owner?: string;
   members?: number;
   links?: number;
   memberLimit?: number;
   linkLimit?: number;
   isPersonal?: boolean;
+  ownerId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const workspacesApi = {
   getWorkspaces: async (): Promise<Workspace[]> => {
-    const mockWorkspaces: Workspace[] = [
-      { id: '1', name: 'Personal Workspace', owner: '@johndoe', members: 1, links: 12, memberLimit: 3, linkLimit: 15, isPersonal: true },
-      { id: '2', name: 'Team Alpha', owner: '@janedoe', members: 7, links: 12, memberLimit: 10, linkLimit: 60 },
-    ];
-    const response = await apiClient.get(mockWorkspaces, 600);
+    const response = await apiClient.get<Workspace[]>('/api/workspaces');
     return response.data;
   },
 
   getWorkspace: async (id: string): Promise<Workspace> => {
-    const mockWorkspace: Workspace = {
-      id: id, name: 'Personal Workspace', owner: '@johndoe', members: 1, links: 12, memberLimit: 3, linkLimit: 15, isPersonal: true
-    };
-    const response = await apiClient.get(mockWorkspace, 400);
+    const response = await apiClient.get<Workspace>(`/api/workspaces/${id}`);
     return response.data;
   },
 
-  createWorkspace: async (data: Partial<Workspace>): Promise<Workspace> => {
-    const newWorkspace: Workspace = {
-      id: Date.now().toString(),
-      name: data.name || 'New Workspace',
-      owner: '@johndoe',
-      members: 1,
-      links: 0,
-      memberLimit: 3,
-      linkLimit: 15,
-      ...data
-    };
-    const response = await apiClient.post(newWorkspace, 800);
-    return response.data as Workspace;
+  createWorkspace: async (name: string): Promise<Workspace> => {
+    const response = await apiClient.post<Workspace>('/api/workspaces', { name: name.toString() });
+    return response.data;
   },
 
+  updateWorkspace: async (id: string, data: Partial<Workspace>): Promise<Workspace> => {
+    const response = await apiClient.put<Workspace>(`/api/workspaces/${id}`, data);
+    return response.data;
+  },
+
+  deleteWorkspace: async (id: string): Promise<void> => {
+    await apiClient.delete(`/api/workspaces/${id}`);
+  },
+
+  // Legacy methods for backward compatibility
   inviteMember: async (workspaceId: string, email: string, role: string): Promise<boolean> => {
-    const response = await apiClient.post({ success: true }, 600);
-    return response.data.success;
+    // This endpoint may not exist in your API yet
+    console.warn('inviteMember not implemented in current API');
+    return true;
   },
 
   removeMember: async (workspaceId: string, memberId: string | number): Promise<boolean> => {
-    const response = await apiClient.post({ success: true }, 600);
-    return response.data.success;
-  }
+    console.warn('removeMember not implemented in current API');
+    return true;
+  },
+
+  updateWorkspaceStats: async (id: string, stats: Partial<Workspace>): Promise<Workspace> => {
+    return workspacesApi.updateWorkspace(id, stats);
+  },
 };

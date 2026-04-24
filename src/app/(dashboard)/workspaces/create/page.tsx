@@ -30,11 +30,11 @@ export default function CreateWorkspace() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const ws = await workspacesApi.createWorkspace({ name: workspaceName });
+      const ws = await workspacesApi.createWorkspace(workspaceName);
       for (const email of invites) {
         await workspacesApi.inviteMember(ws.id.toString(), email, 'Member');
       }
-      router.push('/workspaces');
+      router.push('/dashboard/workspaces');
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);
@@ -45,7 +45,7 @@ export default function CreateWorkspace() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div className="space-y-4">
-        <Link href="/workspaces" className="flex items-center gap-2 text-[rgba(250,250,255,0.6)] hover:text-[#e4d9ff] transition-colors">
+        <Link href="/dashboard/workspaces" className="flex items-center gap-2 text-[rgba(250,250,255,0.6)] hover:text-[#e4d9ff] transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to workspaces
         </Link>

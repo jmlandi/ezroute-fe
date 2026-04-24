@@ -10,7 +10,7 @@ import { Eye, EyeOff, Upload, Loader2 } from 'lucide-react';
 export default function SignUp() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  // const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -22,23 +22,24 @@ export default function SignUp() {
     acceptPrivacy: false,
   });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //      setProfileImage(reader.result as string);
+  //    };
+  //    reader.readAsDataURL(file);
+  //  }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.acceptPrivacy) {
-      alert('Please accept the Privacy Policy to continue');
-      return;
-    }
+    
+    // if (!formData.acceptPrivacy) {
+    //   alert('Please accept the Privacy Policy to continue');
+    //   return;
+    // }
     
     setIsLoading(true);
     setError(null);
@@ -50,7 +51,7 @@ export default function SignUp() {
         firstName: formData.firstName,
         email: formData.email,
         password: formData.password,
-        newsletter: formData.newsletter,
+        newsletterSubscribed: formData.newsletter,
       });
       router.push('/dashboard');
     } catch (err) {
@@ -77,7 +78,7 @@ export default function SignUp() {
             </div>
           )}
 
-          {/* Profile Picture */}
+          {/* Profile Picture
           <div className="flex flex-col items-center space-y-3">
             <div className="relative">
               <div className="w-24 h-24 rounded-full bg-[#1e2749] border-2 border-[rgba(228,217,255,0.2)] flex items-center justify-center overflow-hidden">
@@ -100,7 +101,7 @@ export default function SignUp() {
               />
             </div>
             <p className="text-xs text-[rgba(250,250,255,0.5)]">Upload profile picture</p>
-          </div>
+          </div>*/}
 
           <div className="space-y-4">
             <div className="space-y-2">
@@ -172,7 +173,7 @@ export default function SignUp() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors disabled:opacity-50"
+                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors disabled:opacity-50"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -196,6 +197,7 @@ export default function SignUp() {
               </span>
             </label>
 
+            {/*
             <label className={`flex items-start gap-3 cursor-pointer group ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
               <input
                 type="checkbox"
@@ -209,12 +211,13 @@ export default function SignUp() {
                 I accept the <Link href="/privacy" className="text-[#e4d9ff] hover:underline">Privacy Policy</Link>
               </span>
             </label>
-          </div>
+            */}
 
+          </div>
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-[#e4d9ff] text-[#30343f] flex justify-center items-center gap-2 rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full py-3 bg-[#e4d9ff] text-[#30343f] flex justify-center items-center gap-2 rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? 'Creating Account...' : 'Create Account'}

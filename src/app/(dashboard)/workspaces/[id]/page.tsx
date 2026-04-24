@@ -79,7 +79,7 @@ export default function WorkspaceDetail() {
     <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div className="space-y-4">
-        <Link href="/workspaces" className="flex items-center gap-2 text-[rgba(250,250,255,0.6)] hover:text-[#e4d9ff] transition-colors">
+        <Link href="/dashboard/workspaces" className="flex items-center gap-2 text-[rgba(250,250,255,0.6)] hover:text-[#e4d9ff] transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to workspaces
         </Link>
@@ -103,7 +103,7 @@ export default function WorkspaceDetail() {
             <p className="text-xs text-[rgba(250,250,255,0.6)]">
               You've exceeded your plan limits. Please upgrade or remove members/links.
             </p>
-            <Link href="/billing" className="inline-block text-sm text-[#e4d9ff] hover:underline">
+            <Link href="/dashboard/billing" className="inline-block text-sm text-[#e4d9ff] hover:underline">
               Upgrade Plan →
             </Link>
           </div>

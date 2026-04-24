@@ -70,13 +70,13 @@ export default function Welcome() {
         >
           <button
             onClick={() => router.push('/signup')}
-            className="w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)]"
+            className="cursor-pointer w-full py-3 bg-[#e4d9ff] text-[#30343f] rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)]"
           >
             Get Started
           </button>
           <button
             onClick={() => router.push('/signin')}
-            className="w-full py-3 bg-transparent border border-[rgba(228,217,255,0.2)] text-[#fafaff] rounded-lg hover:bg-[rgba(228,217,255,0.05)] transition-all"
+            className="cursor-pointer w-full py-3 bg-transparent border border-[rgba(228,217,255,0.2)] text-[#fafaff] rounded-lg hover:bg-[rgba(228,217,255,0.05)] transition-all"
           >
             Sign In
           </button>

@@ -6,6 +6,7 @@ import { Plus, TrendingUp, Users, Link as LinkIcon, Loader2 } from 'lucide-react
 import { motion } from 'motion/react';
 import { dashboardApi, DashboardStat, RecentLink } from '@/services/api/dashboard';
 import { workspacesApi, Workspace } from '@/services/api/workspaces';
+import { authApi, UserInfoResponse } from '@/services/api/auth';
 
 // Map string icon names to actual Lucide components
 const iconMap: Record<string, any> = {
@@ -14,23 +15,27 @@ const iconMap: Record<string, any> = {
   linkIcon: LinkIcon,
 };
 
+ 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStat[]>([]);
   const [recentLinks, setRecentLinks] = useState<RecentLink[]>([]);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsData, linksData, workspacesData] = await Promise.all([
+        const [statsData, linksData, workspacesData, userData] = await Promise.all([
           dashboardApi.getStats(),
           dashboardApi.getRecentLinks(),
-          workspacesApi.getWorkspaces()
+          workspacesApi.getWorkspaces(),
+          authApi.getCurrentUser(),
         ]);
         setStats(statsData);
         setRecentLinks(linksData);
         setWorkspaces(workspacesData);
+        setUser(userData)
       } catch (error) {
         console.error("Failed to load dashboard data:", error);
       } finally {
@@ -58,7 +63,7 @@ export default function Dashboard() {
         transition={{ duration: 0.3 }}
       >
         <h1 className="text-2xl">Dashboard</h1>
-        <p className="text-sm text-[rgba(250,250,255,0.6)]">Welcome back, @johndoe</p>
+        <p className="text-sm text-[rgba(250,250,255,0.6)]">Welcome, { user?.firstName ?? "buddy" }!</p>
       </motion.div>
 
       {/* Workspace Switcher */}

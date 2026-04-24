@@ -99,7 +99,7 @@ export default function SignIn() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors"
+                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(250,250,255,0.5)] hover:text-[#e4d9ff] transition-colors"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -120,7 +120,7 @@ export default function SignIn() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-[#e4d9ff] text-[#30343f] flex items-center justify-center gap-2 rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full py-3 bg-[#e4d9ff] text-[#30343f] flex items-center justify-center gap-2 rounded-lg hover:bg-[#d4c9ef] transition-all hover:shadow-[0_0_20px_rgba(228,217,255,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? 'Signing In...' : 'Sign In'}
